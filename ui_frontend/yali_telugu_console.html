@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="te" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghat-Guard v5.0 - Kotilingala Ghat Command Console</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ghatDark: '#0A141E',
+                        yaliGold: '#D4AF37',
+                        neonPink: '#FF007F',
+                        terracotta: '#C85A32',
+                        templeParchment: '#132232'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Dravidian Yali Pillar Border Motif */
+        .yali-border-left {
+            border-left: 8px solid #D4AF37;
+            background: linear-gradient(180deg, #132232 0%, #0A141E 100%);
+            box-shadow: inset -4px 0px 12px rgba(212, 175, 55, 0.2);
+        }
+        .yali-border-right {
+            border-right: 8px solid #D4AF37;
+            background: linear-gradient(180deg, #132232 0%, #0A141E 100%);
+            box-shadow: inset 4px 0px 12px rgba(212, 175, 55, 0.2);
+        }
+        /* Telugu Calligraphic Glow Effect */
+        .telugu-sdf-glow {
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.4), 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-ghatDark text-gray-100 h-screen w-screen overflow-hidden flex flex-col select-none">
+
+    <!-- Top Command Header -->
+    <header class="h-16 bg-templeParchment border-b border-yaliGold/40 flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center space-x-4">
+            <span class="text-yaliGold font-bold text-xl tracking-wider">🪷 GHAT-GUARD v5.0</span>
+            <span class="text-xs px-3 py-1 rounded bg-terracotta/20 text-terracotta border border-terracotta/40 font-mono">కోటిలింగాల ఘాట్ (Kotilingala Ghat Terminal)</span>
+        </div>
+        <div class="flex items-center space-x-6 text-sm">
+            <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-gray-300 font-mono">LoRa Mesh: 51-Byte Active</span>
+            </div>
+            <div class="text-yaliGold font-mono">Supercap: 15.8V [STABLE]</div>
+        </div>
+    </header>
+
+    <!-- Main Viewport with Yali Pillar Side Panels -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- Left Dravidian Yali Pillar Frame -->
+        <aside class="w-20 yali-border-left flex flex-col items-center py-6 justify-between shrink-0">
+            <div class="text-yaliGold font-bold text-xs vertical-text tracking-widest opacity-80">యాలి స్తంభం</div>
+            <div class="text-2xl">🦁</div>
+            <div class="text-yaliGold font-mono text-xs">P-01</div>
+        </aside>
+
+        <!-- Central Telemetry Dashboard -->
+        <main class="flex-1 p-6 overflow-y-auto grid grid-cols-1 md:grid-cols-3 gap-6 bg-ghatDark">
+            
+            <!-- Card 1: Crowd Density & Telugu SDF Typography -->
+            <div class="bg-templeParchment border border-yaliGold/30 rounded-xl p-5 flex flex-col justify-between shadow-lg">
+                <div>
+                    <div class="text-xs text-gray-400 font-mono uppercase">మొత్తం సాంద్రత (Density Index)</div>
+                    <div class="text-4xl font-extrabold text-neonPink telugu-sdf-glow mt-2">3.53 <span class="text-lg font-normal text-gray-300">p/m²</span></div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-700/50 flex justify-between text-xs font-mono text-gray-300">
+                    <span>స్థితి (Phase): <strong class="text-amber-400">LIQUID</strong></span>
+                    <span>షీర్: 0.72 s⁻¹</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Shockwave & Stambhana Alert -->
+            <div class="bg-templeParchment border border-terracotta/40 rounded-xl p-5 flex flex-col justify-between shadow-lg">
+                <div>
+                    <div class="text-xs text-gray-400 font-mono uppercase">ముందస్తు హెచ్చరికలు (Shockwave Status)</div>
+                    <div class="text-2xl font-bold text-terracotta telugu-sdf-glow mt-2">స్తంభన హెచ్చరిక (Stambhana Alert)</div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-700/50 flex justify-between text-xs font-mono">
+                    <span class="text-gray-300">ప్రవాహ గతి: <strong class="text-red-400">⬇ ⬇</strong></span>
+                    <span class="text-terracotta font-bold">యాక్టివ్ (Active)</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Harati Puja Haze Vision Fusion -->
+            <div class="bg-templeParchment border border-yaliGold/30 rounded-xl p-5 flex flex-col justify-between shadow-lg">
+                <div>
+                    <div class="text-xs text-gray-400 font-mono uppercase">హారతి పొగ ఫిల్టర్ (Puja Haze Filter)</div>
+                    <div class="text-2xl font-bold text-yaliGold telugu-sdf-glow mt-2">LWIR థర్మల్ షిఫ్ట్</div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-700/50 flex justify-between text-xs font-mono text-gray-300">
+                    <span>ధూమపారం (Opacity): <strong>78%</strong></span>
+                    <span>ఆప్టికల్: <strong class="text-cyan-400">10%</strong></span>
+                </div>
+            </div>
+
+            <!-- Wide Telemetry Matrix Table -->
+            <div class="col-span-1 md:col-span-3 bg-templeParchment border border-yaliGold/30 rounded-xl p-5 shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-yaliGold font-bold text-sm tracking-wide">ఘాట్ నీటి మట్టం & భద్రతా టెలిమెట్రీ (Ghat Water Level & Safety Telemetry)</h3>
+                    <span class="text-xs font-mono px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">సాధారణం (Normal)</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
+                    <div class="bg-ghatDark/60 p-3 rounded border border-gray-800">
+                        <div class="text-gray-400">జనం వేగం (Velocity)</div>
+                        <div class="text-lg font-bold text-gray-100 mt-1">0.92 m/s</div>
+                    </div>
+                    <div class="bg-ghatDark/60 p-3 rounded border border-gray-800">
+                        <div class="text-gray-400">సూపర్‌క్యాప్ వోల్టేజ్</div>
+                        <div class="text-lg font-bold text-yaliGold mt-1">15.82 V</div>
+                    </div>
+                    <div class="bg-ghatDark/60 p-3 rounded border border-gray-800">
+                        <div class="text-gray-400">బాద్-మేక్ కౌంటర్</div>
+                        <div class="text-lg font-bold text-emerald-400 mt-1">0 (Secure)</div>
+                    </div>
+                    <div class="bg-ghatDark/60 p-3 rounded border border-gray-800">
+                        <div class="text-gray-400">ఇంటర్‌లాక్ స్థితి</div>
+                        <div class="text-lg font-bold text-cyan-400 mt-1">ఆమోదించింది</div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Right Dravidian Yali Pillar Frame -->
+        <aside class="w-20 yali-border-right flex flex-col items-center py-6 justify-between shrink-0">
+            <div class="text-yaliGold font-bold text-xs vertical-text tracking-widest opacity-80">రక్షణ గ్రిడ్</div>
+            <div class="text-2xl">🏛️</div>
+            <div class="text-yaliGold font-mono text-xs">R-01</div>
+        </aside>
+
+    </div>
+
+</body>
+</html>
