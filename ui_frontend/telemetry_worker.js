@@ -1,54 +1,82 @@
 /**
- * Ghat-Guard v5.0 - Chunk 6: Isolated Web Worker Thread
- * Offloads LoRa telemetry packet parsing, Bad-MAC integrity checks, 
- * and phase classification off the main UI thread to maintain 60 FPS.
+ * Ghat-Guard v5.0 - Telemetry Worker (Offline-first UI)
+ * Parses 51-byte LoRa mesh packets (hex) when provided and/or normalizes
+ * telemetry fields off the main UI thread.
+ *
+ * 51-byte layout (little-endian): <IffBHH34s
+ * nodeId(u32), density(f32), velocity(f32), phase(u8),
+ * badMac(u16), supercapScaled(u16, V*100), padding(34)
  */
 
-self.onmessage = function(e) {
-    const packet = e.data;
-    
-    // 1. Verify packet structure and integrity
-    if (!packet || !packet.payloadHex) {
-        self.postMessage({ error: "Invalid telemetry packet received." });
-        return;
+self.onmessage = function (e) {
+  var input = e.data || {};
+  var start = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+
+  function toHexBytes(hex) {
+    if (!hex || typeof hex !== 'string') return null;
+    var clean = hex.replace(/[^0-9a-fA-F]/g, '');
+    if (clean.length % 2 !== 0) return null;
+    var out = new Uint8Array(clean.length / 2);
+    for (var i = 0; i < clean.length; i += 2) {
+      out[i / 2] = parseInt(clean.substr(i, 2), 16);
     }
+    return out;
+  }
 
-    const startTime = performance.now();
+  function parse51BytePacket(hex) {
+    var bytes = toHexBytes(hex);
+    if (!bytes || bytes.length !== 51) return null;
+    var view = new DataView(bytes.buffer);
+    var density = view.getFloat32(4, true);
+    var velocity = view.getFloat32(8, true);
+    var phaseCode = view.getUint8(12);
+    var badMac = view.getUint16(13, true);
+    var supercap = view.getUint16(15, true) / 100;
+    var phase = phaseCode === 2 ? 'SOLID' : (phaseCode === 1 ? 'LIQUID' : 'GAS');
+    if (!isFinite(density) || !isFinite(velocity) || !isFinite(supercap)) return null;
+    return {
+      nodeId: view.getUint32(0, true),
+      density: density,
+      velocity: velocity,
+      phase: phase,
+      phaseCode: phaseCode,
+      badMacCount: badMac,
+      supercapVoltage: supercap
+    };
+  }
 
-    // 2. Simulate binary parsing of the 51-byte state vector
-    const nodeId = packet.nodeId || 101;
-    const density = parseFloat(packet.density || 0.0);
-    const velocity = parseFloat(packet.velocity || 0.0);
-    const supercapV = parseFloat(packet.supercapVoltage || 15.8);
-    const badMacCount = parseInt(packet.badMacCount || 0, 10);
+  var parsedPacket = parse51BytePacket(input.payloadHex);
+  if (!parsedPacket && !input.payloadHex && input.density == null) {
+    self.postMessage({ error: 'Invalid telemetry packet received.' });
+    return;
+  }
 
-    // 3. Compute Granular Phase & Shockwave Risk
-    let phase = "GAS";
-    if (density >= 4.0 || velocity < 0.25) {
-        phase = "SOLID"; // Stambhana collapse
-    } else if (density >= 1.5) {
-        phase = "LIQUID";
+  var density = parsedPacket ? parsedPacket.density : Number(input.density || 0);
+  var velocity = parsedPacket ? parsedPacket.velocity : Number(input.velocity || 0);
+  var supercapVoltage = parsedPacket ? parsedPacket.supercapVoltage : Number(input.supercapVoltage || 15.8);
+  var badMacCount = parsedPacket ? parsedPacket.badMacCount : parseInt(input.badMacCount || 0, 10);
+  var nodeId = parsedPacket ? parsedPacket.nodeId : (input.nodeId || 101);
+  var phase = parsedPacket ? parsedPacket.phase : (density >= 4.0 || velocity < 0.25 ? 'SOLID' : (density >= 1.5 ? 'LIQUID' : 'GAS'));
+
+  var shockwaveRisk = density >= 3.8 ? 'CRITICAL_UPSTREAM_WARNING' : 'NOMINAL';
+  var end = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+
+  self.postMessage({
+    status: 'SUCCESS',
+    nodeId: nodeId,
+    parsedData: {
+      density: density,
+      velocity: velocity,
+      phase: phase,
+      supercapVoltage: supercapVoltage,
+      badMacCount: badMacCount,
+      breakBeforeMakeCount: Number(input.breakBeforeMakeCount || 0),
+      waterLevel: input.waterLevel || '+2.14 m',
+      shockwaveRisk: shockwaveRisk
+    },
+    workerMetrics: {
+      processingTimeMs: Number(end - start).toFixed(3),
+      parsed51BytePacket: !!parsedPacket
     }
-
-    const shockwaveRisk = density >= 3.8 ? "CRITICAL_UPSTREAM_WARNING" : "NOMINAL";
-
-    const processingTime = performance.now() - startTime;
-
-    // 4. Send structured state update back to main SPA thread
-    self.postMessage({
-        status: "SUCCESS",
-        nodeId: nodeId,
-        parsedData: {
-            density: density,
-            velocity: velocity,
-            phase: phase,
-            supercapVoltage: supercapV,
-            badMacCount: badMacCount,
-            shockwaveRisk: shockwaveRisk
-        },
-        workerMetrics: {
-            processingTimeMs: processingTime.toFixed(3),
-            fpsMainThreadLock: 60
-        }
-    });
+  });
 };
