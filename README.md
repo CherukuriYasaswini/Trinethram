@@ -77,3 +77,4 @@ python audit_logs/compliance_register.py
 - **Break-before-make** logic must isolate actuator outputs before applying a new state.
 - Audit records are **append-only** and hash-chained; verification should be performed during maintenance/offline review.
 - This repository provides production-oriented control logic and UI scaffolding; field deployment requires hardware validation, calibration, and municipal safety certification.
+redeploy
