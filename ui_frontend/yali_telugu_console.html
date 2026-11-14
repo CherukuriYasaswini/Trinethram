@@ -401,7 +401,7 @@
       function fmt(n, digits) { return (typeof n === 'number' && isFinite(n)) ? n.toFixed(digits) : '--'; }
       function t(en, te) { return lang === 'te' ? te : en; }
       function setText(id, en, te) { var el = document.getElementById(id); if(!el) return; el.setAttribute('data-en', en); el.setAttribute('data-te', te); el.textContent = t(en, te); }
-   const BACKEND_URL = 'https://trinethram-backend.onrender.com';
+const BACKEND_URL = 'BACKEND_RENDER_URL';
 	async function api(path, opts) {
   try {
     var r = await fetch(BACKEND_URL + path, opts || {});        var j = null, jsonError = false;
